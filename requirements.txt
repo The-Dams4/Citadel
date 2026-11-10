@@ -1,0 +1,6 @@
+streamlit
+gspread
+anthropic
+python-dotenv
+pandas
+tzdata
