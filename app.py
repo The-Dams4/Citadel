@@ -7,6 +7,7 @@ import streamlit as st
 from pieces import EXERCICES
 from structurer import structurer
 from armure import etat_armure
+from records import records_actuels, nouveaux_records
 
 ID_CLASSEUR = "1hF78VjodLHoiKs9QDZ8tChI8WvOdRYluAyQeAtiw6jE"
 
@@ -43,6 +44,11 @@ st.title(f"Citadel Mk {min(p['mk'] for p in etat)}")
 
 if "message" in st.session_state:
     st.success(st.session_state.pop("message"))
+
+if "records" in st.session_state:
+    for annonce in st.session_state.pop("records"):
+        st.info(annonce, icon="🏆")
+    st.balloons()
 
 for p in etat:
     gauche, droite = st.columns([1, 2])
@@ -86,3 +92,14 @@ if "seance" in st.session_state:
 
     if st.button("Valider la séance", type="primary", disabled=not inconnus.empty):
         date = datetime.now(ZoneInfo("Asia/Bangkok")).strftime("%d/%m/%Y")
+        lignes = [[date, r["exercice"], EXERCICES[r["exercice"]],
+                   int(r["serie"]), int(r["repetitions"]), float(r["charge"])]
+                  for _, r in tableau.iterrows()]
+        anciens = records_actuels(classeur)
+        annonces = nouveaux_records(anciens, [(l[1], l[4], l[5]) for l in lignes])
+        classeur.worksheet("Séances").append_rows(lignes, value_input_option="USER_ENTERED")
+        if annonces:
+            st.session_state["records"] = annonces
+        del st.session_state["seance"]
+        st.session_state["message"] = f"{len(lignes)} séries enregistrées. La Citadel se renforce."
+        st.rerun()
