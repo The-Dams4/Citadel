@@ -9,6 +9,7 @@ from pieces import EXERCICES
 from structurer import structurer
 from armure import etat_armure
 from records import records_actuels, nouveaux_records
+from progression import afficher_progression
 
 ID_CLASSEUR = "1hF78VjodLHoiKs9QDZ8tChI8WvOdRYluAyQeAtiw6jE"
 DOSSIER_IMAGES = Path(__file__).parent / "images"
@@ -110,3 +111,6 @@ if "seance" in st.session_state:
         del st.session_state["seance"]
         st.session_state["message"] = f"{len(lignes)} séries enregistrées. La Citadel se renforce."
         st.rerun()
+
+st.divider()
+afficher_progression(classeur)
