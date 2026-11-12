@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
 import gspread
 import pandas as pd
@@ -10,6 +11,7 @@ from armure import etat_armure
 from records import records_actuels, nouveaux_records
 
 ID_CLASSEUR = "1hF78VjodLHoiKs9QDZ8tChI8WvOdRYluAyQeAtiw6jE"
+DOSSIER_IMAGES = Path(__file__).parent / "images"
 
 st.set_page_config(page_title="Citadel", page_icon="🛡️")
 
@@ -40,7 +42,12 @@ classeur = ouvrir_classeur()
 
 # --- L'armure ---
 etat = etat_armure(classeur)
-st.title(f"Citadel Mk {min(p['mk'] for p in etat)}")
+mk_global = min(p["mk"] for p in etat)
+st.title(f"Citadel Mk {mk_global}")
+
+image = DOSSIER_IMAGES / f"mk{mk_global}.jpg"
+if image.exists():
+    st.image(str(image))
 
 if "message" in st.session_state:
     st.success(st.session_state.pop("message"))
